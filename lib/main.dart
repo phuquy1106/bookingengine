@@ -1,4 +1,5 @@
 import 'package:bookingengine_frontend/manager/generalmanager.dart';
+import 'package:bookingengine_frontend/ui/congratulations.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:bookingengine_frontend/ui/home.dart';
@@ -35,6 +36,7 @@ void main() async {
                   return MaterialPageRoute(
                       builder: (_) => const PageNotFound());
                 },
+                routes: {'main': (context) => const Congratulations()},
                 onGenerateInitialRoutes: (String value) {
                   return [
                     MaterialPageRoute(builder: (_) => const HomeWidget())

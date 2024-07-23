@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bookingengine_frontend/contals/neutrontexttilte.dart';
 import 'package:bookingengine_frontend/controller/bookingformcontroller.dart';
 import 'package:bookingengine_frontend/gen/fonts.gen.dart';
@@ -11,7 +13,10 @@ import 'package:bookingengine_frontend/util/messageulti.dart';
 import 'package:bookingengine_frontend/util/neutrontextcontent.dart';
 import 'package:bookingengine_frontend/util/numberutil.dart';
 import 'package:bookingengine_frontend/util/uimultilanguageutil.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ConfirmBooking extends StatefulWidget {
   const ConfirmBooking(
@@ -19,17 +24,49 @@ class ConfirmBooking extends StatefulWidget {
       required this.data,
       this.controller,
       this.roomType,
+      this.pricePerNight,
+      this.email,
+      this.teNums,
       this.rateRoomType});
   final Map<String, dynamic> data;
   final RoomType? roomType;
+  final String? email;
   final BookingFormController? controller;
+  final Map<String, Map<String, num>>? teNums;
   final RateRoomTypes? rateRoomType;
+  final Map<String, Map<String, List<num>>>? pricePerNight;
 
   @override
   State<ConfirmBooking> createState() => _ConfirmBookingState();
 }
 
 class _ConfirmBookingState extends State<ConfirmBooking> {
+  void startPayment() async {
+    String paymentUrl =
+        'https://us-central1-neutron-pms.cloudfunctions.net/bookingengine-returnPaymentlistener';
+    try {
+      final response = await http.get(Uri.parse(paymentUrl));
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        if (result['status'] == 'success') {
+          // Redirect user to VNPay
+          final vnpayUrl = result['url'];
+          if (await canLaunch(vnpayUrl)) {
+            await launch(vnpayUrl);
+          } else {
+            throw 'Could not launch $vnpayUrl';
+          }
+        } else {
+          print('${result['message']}');
+        }
+      } else {
+        print('Failed to initiate payment');
+      }
+    } catch (e) {
+      print('An error occurred: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -630,37 +667,73 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   alignment: Alignment.bottomCenter,
                                   child: ElevatedButton(
                                     onPressed: () async {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            const LoadingWidget(),
-                                      );
-                                      String result = await widget.controller!
-                                          .addBooking(
-                                              (widget.rateRoomType!.rateMax!)
-                                                  .toInt(),
-                                              widget.data['inDate'],
-                                              widget.data['outDate'],
-                                              widget.roomType!,
-                                              widget.data['adult'],
-                                              widget.data['child'],
-                                              (widget.data['outDate']
-                                                          as DateTime)
-                                                      .day -
-                                                  (widget.data['inDate']
-                                                          as DateTime)
-                                                      .day,
-                                              widget.data['numberRoom']);
-                                      if (!context.mounted) return;
-                                      if (result == MessageCodeUtil.SUCCESS) {
-                                        MaterialUtil.showSnackBar(
-                                            context,
-                                            MessageUtil.getMessageByCode(
-                                                MessageCodeUtil.SUCCESS));
+                                      String message = '';
+                                      if (widget.controller!.raidoText ==
+                                          'ck') {
+                                        message =
+                                            'Bạn muốn thanh toán chuyển khoản!';
+                                      } else {
+                                        message =
+                                            'Bạn muốn thanh toán tại khách sạn!';
+                                      }
+                                      bool? confirmResult =
+                                          await MaterialUtil.showConfirm(
+                                              context, message);
+                                      if (confirmResult == null ||
+                                          !confirmResult) {
                                         return;
                                       }
-                                      MaterialUtil.showAlert(context, result);
-                                      return;
+                                      if (mounted) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              const LoadingWidget(),
+                                        );
+                                        String idBooking =
+                                            await widget.controller!.addBooking(
+                                                (widget.rateRoomType!.rateMax!)
+                                                    .toInt(),
+                                                widget.data['inDate'],
+                                                widget.data['outDate'],
+                                                widget.roomType!,
+                                                widget.data['adult'],
+                                                widget.data['child'],
+                                                widget.teNums!,
+                                                (widget.data['outDate']
+                                                            as DateTime)
+                                                        .day -
+                                                    (widget.data['inDate']
+                                                            as DateTime)
+                                                        .day,
+                                                widget.pricePerNight!);
+                                        if (widget.controller!.raidoText ==
+                                            'ck') {
+                                          await widget.controller!
+                                              .getUrlPaymentVNPay(
+                                                  widget.controller!.total,
+                                                  idBooking)
+                                              .then((result) async {
+                                            if (!result
+                                                .startsWith('https://')) {
+                                              MaterialUtil.showAlert(
+                                                  context,
+                                                  MessageUtil.getMessageByCode(
+                                                      result));
+                                              return;
+                                            }
+                                            print(result);
+                                            launchUrlString(result,
+                                                mode: LaunchMode
+                                                    .externalApplication);
+                                            startPayment();
+                                          });
+                                        }
+                                        widget.controller!
+                                            .sendEmail(widget.email!);
+                                        if (!context.mounted) return;
+                                        Navigator.of(context).pop();
+                                      }
+
                                       // if (mounted) {
                                       //   Navigator.of(context).pop();
                                       // }

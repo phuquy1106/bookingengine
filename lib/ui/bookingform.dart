@@ -23,10 +23,16 @@ class BookingFormWigget extends StatefulWidget {
       this.roomType,
       this.controller,
       this.data,
+      this.teNums,
+      this.email,
+      this.pricePerNight,
       this.rateRoomType});
   final RoomType? roomType;
+  final String? email;
   final BookingFormController? controller;
   final Map<String, dynamic>? data;
+  final Map<String, Map<String, num>>? teNums;
+  final Map<String, Map<String, List<num>>>? pricePerNight;
   final RateRoomTypes? rateRoomType;
   @override
   State<BookingFormWigget> createState() => _BookingFormWiggetState();
