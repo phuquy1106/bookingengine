@@ -47,12 +47,14 @@ class Booking {
   bool? isPriceFirstMonthly = false;
   List<dynamic>? declareGuests = [];
   Map<String, dynamic>? declareInfo = {};
+  Map<String, dynamic>? pricePerNight = {};
   Map<String, dynamic>? paymentDetails = {};
   Map<String, dynamic>? costDetails = {};
   Map<String, dynamic>? discountDetails = {};
   Map<String, dynamic>? depositDetails = {};
   Map<String, dynamic>? electricityDetails = {};
   Map<String, dynamic>? waterDetails = {};
+  Map<String, Map<String, num>>? teNums = {};
   num? totalDepositPayment;
   num? totalRoomCharge;
   num? deposit;
@@ -93,6 +95,7 @@ class Booking {
     this.outTime,
     this.numberRoom,
     this.cancelled,
+    this.teNums,
     this.status,
     this.bookingType,
     this.roomTypeID,
@@ -140,6 +143,7 @@ class Booking {
     this.discountDetails,
     this.electricityDetails,
     this.waterDetails,
+    this.pricePerNight,
     this.otaDeposit,
     this.notes,
     this.subBookings,
@@ -185,6 +189,7 @@ class Booking {
       'list_room_type': {roomTypeID: numberRoom},
       'source': sourceID,
       'sid': sID,
+      'teNums': teNums,
       'phone': phone,
       'email': email,
       'breakfast': breakfast,
@@ -196,6 +201,7 @@ class Booking {
       'status': status,
       'group': group,
       'price': price,
+      'price_per_night': pricePerNight,
       'tax_declare': isTaxDeclare,
       'list_guest_declaration': declareGuests,
       'declaration_invoice_detail': declareInfo,
@@ -208,10 +214,14 @@ class Booking {
       "isfristmonthly": isPriceFirstMonthly
     };
     try {
-      HttpsCallable callable = FirebaseFunctions.instance
-          .httpsCallable('bookingengine-addBookingBookingEngine');
-      await callable(bookingAdd);
-      return MessageCodeUtil.SUCCESS;
+      String res = await FirebaseFunctions.instance
+          .httpsCallable('bookingengine-addBookingBookingEngine')
+          .call(bookingAdd)
+          .then((value) {
+        String result = value.data as String;
+        return result;
+      });
+      return res;
     } on FirebaseFunctionsException catch (error) {
       return error.message!;
     }

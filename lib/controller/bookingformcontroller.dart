@@ -10,6 +10,7 @@ class BookingFormController extends ChangeNotifier {
   double? process;
   String raidoText = 'ck';
   TextEditingController? teName, teEmail, tePhone, teNotes;
+  num total = 0;
   BookingFormController() {
     index = 0;
     process = 0;
@@ -43,14 +44,32 @@ class BookingFormController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> getUrlPaymentVNPay(num amount) async {
+  Future<String> getUrlPaymentVNPay(num amount, String idBooking) async {
     return await FirebaseFunctions.instance
         .httpsCallable("bookingengine-payemntVnPayBookingEngine")
-        .call({'hotel_id': GeneralManager.idHotel, 'amount': amount}).then(
-            (value) {
+        .call({
+      'hotel_id': GeneralManager.idHotel,
+      'amount': amount,
+      'idBooking': idBooking
+    }).then((value) {
       notifyListeners();
       return value.data;
     }).onError((error, stackTrace) {
+      return (error as FirebaseFunctionsException).code;
+    });
+  }
+
+  Future<String> sendEmail(String email) async {
+    return await FirebaseFunctions.instance
+        .httpsCallable("bookingengine-sendEmail")
+        .call({
+      'email': email,
+    }).then((value) {
+      notifyListeners();
+      print(value);
+      return value.data;
+    }).onError((error, stackTrace) {
+      print(error);
       return (error as FirebaseFunctionsException).code;
     });
   }
@@ -62,71 +81,74 @@ class BookingFormController extends ChangeNotifier {
       RoomType roomType,
       int adult,
       int child,
-      int numberDay,
-      int numberRoom) async {
-    bool isAddBooking = true;
-    List<num> listAmount = [];
-    for (var i = 0; i < numberDay; i++) {
-      listAmount.add(amount);
+      Map<String, Map<String, num>> teNums,
+      int numberRoom,
+      Map<String, Map<String, List<num>>>? pricePerNight) async {
+    final name = teName!.text;
+    final email = teEmail!.text;
+    total = 0;
+    num totalPrice = 0;
+    num totalRoom = 0;
+    print(teNums);
+    print(pricePerNight);
+    for (var key in pricePerNight!.keys) {
+      if (teNums.containsKey(key)) {
+        totalRoom = 0;
+        for (var rateRoomT in pricePerNight[key]!.keys) {
+          totalPrice = 0;
+          for (var i = 0; i < pricePerNight[key]![rateRoomT]!.length; i++) {
+            totalPrice += pricePerNight[key]![rateRoomT]![i];
+          }
+          totalRoom = totalPrice * teNums[key]![rateRoomT]!;
+          total += totalRoom;
+        }
+      }
+    }
+    print(total);
+    if (name.isEmpty) {
+      return MessageUtil.getMessageByCode(MessageCodeUtil.INPUT_NAME);
+    }
+    if (email.isEmpty) {
+      return MessageUtil.getMessageByCode(MessageCodeUtil.INPUT_NAME);
     }
 
-    if (isAddBooking) {
-      final name = teName!.text;
-      final email = teEmail!.text;
-      if (name.isEmpty) {
-        return MessageUtil.getMessageByCode(MessageCodeUtil.INPUT_NAME);
-      }
-      // String? validateSid = StringValidator.validateSid(tesid);
-      if (email.isEmpty) {
-        return MessageUtil.getMessageByCode(MessageCodeUtil.INPUT_NAME);
-      }
-      // String? validateSid = StringValidator.validateSid(tesid);
-      // if (validateSid != null && tesid.isNotEmpty) {
-      //   return validateSid;
-      // }
-
-      Map<String, dynamic> mapInvoiceDetail = {};
-
-      // updating = true;
-      notifyListeners();
-      // export backup here
-      final result = await Booking(
-              group: false,
-              price: listAmount,
-              ratePlanID: '',
-              name: teName!.text.replaceAll(RegExp(r"\s\s+"), ' ').trim(),
-              email: teEmail!.text,
-              phone: tePhone!.text,
-              room: '',
-              inDate: inDate,
-              inTime: inDate,
-              outDate: outDate,
-              outTime: outDate,
-              roomTypeID: roomType.id,
-              bed: '',
-              payAtHotel: true,
-              numberRoom: numberRoom,
-              breakfast: false,
-              lunch: false,
-              dinner: false,
-              adult: adult,
-              child: child,
-              sourceID: 'booking_engine',
-              sID: '',
-              status: 0,
-              isTaxDeclare: false,
-              declareGuests: [],
-              declareInfo: mapInvoiceDetail,
-              typeTourists: '',
-              country: '',
-              bookingType: 0,
-              notes: teNotes!.text,
-              saler: '',
-              externalSaler: '',
-              isPriceFirstMonthly: false)
-          .add();
-      notifyListeners();
-      return MessageUtil.getMessageByCode(result);
-    }
+    notifyListeners();
+    final result = await Booking(
+            group: false,
+            ratePlanID: '',
+            name: teName!.text.replaceAll(RegExp(r"\s\s+"), ' ').trim(),
+            email: teEmail!.text,
+            phone: tePhone!.text,
+            room: '',
+            inDate: inDate,
+            inTime: inDate,
+            teNums: teNums,
+            outDate: outDate,
+            outTime: outDate,
+            roomTypeID: roomType.id,
+            bed: '',
+            payAtHotel: true,
+            numberRoom: numberRoom,
+            breakfast: false,
+            lunch: false,
+            dinner: false,
+            adult: adult,
+            child: child,
+            pricePerNight: pricePerNight,
+            sourceID: 'booking_engine',
+            sID: '',
+            status: 0,
+            isTaxDeclare: false,
+            declareGuests: [],
+            typeTourists: '',
+            country: '',
+            bookingType: 0,
+            notes: teNotes!.text,
+            saler: '',
+            externalSaler: '',
+            isPriceFirstMonthly: false)
+        .add();
+    notifyListeners();
+    return result;
   }
 }
