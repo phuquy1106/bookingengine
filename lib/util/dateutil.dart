@@ -177,6 +177,13 @@ class DateUtil {
         12));
   }
 
+  static DateTime timestampToDateTime(Map<String, dynamic> timestamp) {
+    int seconds = timestamp['_seconds'];
+    int nanoseconds = timestamp['_nanoseconds'];
+    return DateTime.fromMillisecondsSinceEpoch(
+        seconds * 1000 + nanoseconds ~/ 1000000);
+  }
+
   // static String getDifferenceFromNow(DateTime date) {
   //   Duration duration = DateTime.now().difference(date);
   //   if (duration.inSeconds < 60) {

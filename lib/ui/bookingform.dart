@@ -24,11 +24,9 @@ class BookingFormWigget extends StatefulWidget {
       this.controller,
       this.data,
       this.teNums,
-      this.email,
       this.pricePerNight,
       this.rateRoomType});
   final RoomType? roomType;
-  final String? email;
   final BookingFormController? controller;
   final Map<String, dynamic>? data;
   final Map<String, Map<String, num>>? teNums;

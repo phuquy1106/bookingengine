@@ -1,4 +1,5 @@
 import 'package:bookingengine_frontend/manager/generalmanager.dart';
+import 'package:bookingengine_frontend/model/subbooking.dart';
 import 'package:bookingengine_frontend/util/dateutil.dart';
 import 'package:bookingengine_frontend/util/messageulti.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,10 +20,11 @@ class Booking {
   int? bookingType;
   String? roomTypeID;
   String? room;
-  List<num>? price;
+  List<dynamic>? price;
   int? lengthStay;
   int? lengthRender;
   String? bed;
+  List<Subbooking>? subbooking;
   bool? breakfast = false;
   bool? lunch = false;
   bool? dinner = false;
@@ -73,7 +75,9 @@ class Booking {
   String? country;
   String? typeTourists;
   String? notes;
+  String? idBookingVnPay;
   num? rentingBikes;
+  num? totalAmount;
   num? totalCost;
   int? statusPayment;
   String? creator;
@@ -92,11 +96,14 @@ class Booking {
     this.inDate,
     this.outDate,
     this.inTime,
+    this.subbooking,
     this.outTime,
     this.numberRoom,
     this.cancelled,
     this.teNums,
     this.status,
+    this.idBookingVnPay,
+    this.totalAmount,
     this.bookingType,
     this.roomTypeID,
     this.room,
@@ -159,6 +166,46 @@ class Booking {
     lengthRender = lengthStay;
   }
 
+  factory Booking.fromBooking(Map<String, dynamic> data) {
+    return Booking(
+        id: data['id'],
+        sID: data['sID'] ?? '',
+        name: data['name'] ?? '',
+        email: data['email'] ?? '',
+        phone: data['phone'] ?? '',
+        notes: data['notes'] ?? '',
+        status: data['status'] ?? 0,
+        inDate: DateUtil.timestampToDateTime(
+            data['in_date'] as Map<String, dynamic>),
+        outDate: DateUtil.timestampToDateTime(
+            data['out_date'] as Map<String, dynamic>),
+        roomTypeID: data['room_type'] ?? '',
+        room: data['room'] ?? '',
+        price: data['price'] ?? []);
+  }
+  factory Booking.fromBookingGroup(Map<String, dynamic> data) {
+    List<Subbooking> listSubBooking = [];
+    if (data['subbooking'] != null) {
+      Map<String, dynamic> dataSubbooking = data['subbooking'];
+      for (var key in dataSubbooking.keys) {
+        listSubBooking
+            .add(Subbooking.snapshot(id: key, data: dataSubbooking[key]));
+      }
+    }
+    return Booking(
+        id: data['id'],
+        sID: data['sID'] ?? '',
+        name: data['name'] ?? '',
+        email: data['email'] ?? '',
+        phone: data['phone'] ?? '',
+        notes: data['notes'] ?? '',
+        status: data['status'] ?? 0,
+        inDate: DateUtil.timestampToDateTime(
+            data['in_date'] as Map<String, dynamic>),
+        outDate: DateUtil.timestampToDateTime(
+            data['out_date'] as Map<String, dynamic>),
+        subbooking: listSubBooking);
+  }
   Future<String> add() async {
     if (lengthStay! > GeneralManager.maxLengthStay) {
       return MessageCodeUtil.OVER_MAX_LENGTHDAY_31;
@@ -211,6 +258,8 @@ class Booking {
       'saler': saler,
       'external_saler': externalSaler,
       'booking_type': bookingType,
+      'idBookingVnPay': idBookingVnPay,
+      'totalAmount': totalAmount,
       "isfristmonthly": isPriceFirstMonthly
     };
     try {

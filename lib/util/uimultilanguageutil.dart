@@ -456,6 +456,7 @@ class UITitleCode {
   static const String TABLEHEADER_MAPPING_SOURCE = 'tableheader-mapping-source';
   static const String TABLEHEADER_MALE = 'tableheader-male';
   static const String TABLEHEADER_METHOD = 'tableheader-method';
+  static const String TABLEHEADER_METHOD_PAYMENT = 'tableheader-method-payment';
   static const String TABLEHEADER_METHOD_FROM = 'tableheader-method-from';
   static const String TABLEHEADER_METHOD_TO = 'tableheader-method-to';
 
@@ -1981,6 +1982,10 @@ class UITitleUtil {
     },
     UITitleCode.TABLEHEADER_MALE: {'en': 'Male', 'vi': 'Nam'},
     UITitleCode.TABLEHEADER_METHOD: {'en': 'Method', 'vi': 'Phương thức'},
+    UITitleCode.TABLEHEADER_METHOD_PAYMENT: {
+      'en': 'Method Payment',
+      'vi': 'Phương thức thanh toán'
+    },
     UITitleCode.TABLEHEADER_METHOD_FROM: {
       'en': 'From Method',
       'vi': 'Từ P/Thức'

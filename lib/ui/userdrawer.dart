@@ -1,14 +1,13 @@
 import 'package:bookingengine_frontend/gen/fonts.gen.dart';
 import 'package:bookingengine_frontend/ui/colorconfigdialog.dart';
-import 'package:bookingengine_frontend/ui/confirmbooking.dart';
 import 'package:bookingengine_frontend/ui/facilitiesdialog.dart';
 import 'package:bookingengine_frontend/ui/layoutpicture.dart';
+import 'package:bookingengine_frontend/ui/loaddata.dart';
 import 'package:bookingengine_frontend/ui/pictureconfigdialog.dart';
 import 'package:bookingengine_frontend/ui/policydialog.dart';
 import 'package:bookingengine_frontend/ui/roomtypedialog.dart';
 // import 'package:bookingengine_frontend/ui/uiroom.dart';
 import 'package:bookingengine_frontend/ui/updatefonttext.dart';
-import 'package:bookingengine_frontend/ui/viewbook.dart';
 import 'package:bookingengine_frontend/util/colorutil.dart';
 import 'package:bookingengine_frontend/util/uimultilanguageutil.dart';
 import 'package:flutter/material.dart';
@@ -130,49 +129,13 @@ class UserDrawer extends StatelessWidget {
                   builder: (context) => const UpdateFontText());
             },
           ),
-          // ListTile(
-          //   leading: SvgPicture.asset(
-          //     'assets/icon/room-edit.svg',
-          //     height: 36,
-          //   ),
-          //   title: Text(
-          //     UITitleUtil.getTitleByCode(UITitleCode.SIDEBAR_POLICY),
-          //     style: TextStyle(color: ColorUtil.colorBackgroudText),
-          //   ),
-          //   onTap: () async {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => const UiRoom()),
-          //     );
-          //   },
-          // ),
-
-          // ListTile(
-          //   leading: SvgPicture.asset(
-          //     'assets/icon/room-edit.svg',
-          //     height: 36,
-          //   ),
-          //   title: Text(
-          //     'bookingsForm',
-          //     style: TextStyle(
-          //         color: ColorUtil.colorBackgroudText,
-          //         fontFamily: FontFamily.aria),
-          //   ),
-          //   onTap: () async {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) => const BookingFormWigget()),
-          //     );
-          //   },
-          // ),
           ListTile(
             leading: SvgPicture.asset(
               'assets/icon/room-edit.svg',
               height: 36,
             ),
             title: Text(
-              '2111',
+              'cancelbooking',
               style: TextStyle(
                   color: ColorUtil.colorBackgroudText,
                   fontFamily: FontFamily.aria),
@@ -180,55 +143,11 @@ class UserDrawer extends StatelessWidget {
             onTap: () async {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const BookView()),
+                MaterialPageRoute(
+                    builder: (context) => const LoadData(
+                          idBooking: '7T4igCjw1',
+                        )),
               );
-            },
-          ),
-          // ListTile(
-          //   leading: SvgPicture.asset(
-          //     'assets/icon/room-edit.svg',
-          //     height: 36,
-          //   ),
-          //   title: Text(
-          //     UITitleUtil.getTitleByCode(UITitleCode.SIDEBAR_POLICY),
-          //     style: TextStyle(color: ColorUtil.colorBackgroudText),
-          //   ),
-          //   onTap: () async {
-          //     Navigator.pop(context);
-          //     showDialog(
-          //         context: context,
-          //         builder: (context) => const ConfirmBooking());
-          //   },
-          // ),
-          ListTile(
-            leading: SvgPicture.asset(
-              'assets/icon/room-edit.svg',
-              height: 36,
-            ),
-            title: Text(
-              'confirm booking',
-              style: TextStyle(color: ColorUtil.colorBackgroudText),
-            ),
-            onTap: () async {
-              Navigator.pop(context);
-              showDialog(
-                  context: context,
-                  builder: (context) => ConfirmBooking(
-                        data: {
-                          'indate': DateTime.now(),
-                          'outdate': DateTime.now(),
-                          'day': 1,
-                          'adult': '1',
-                          'child': '2',
-                          'name': 'quy',
-                          'phone': '0123456789',
-                          'email': 'email@gmail.com',
-                          'roomtype': 'Room001',
-                          'totalroom': 1,
-                          'note': 'notes',
-                          'totalprice': 200000,
-                        },
-                      ));
             },
           ),
         ],

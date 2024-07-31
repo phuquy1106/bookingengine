@@ -29,6 +29,20 @@ class NumberUtil {
     return result.join('');
   }
 
+  static String generateUniqueCode() {
+    // Lấy thời gian hiện tại
+    DateTime now = DateTime.now();
+
+    // Tạo một số ngẫu nhiên từ 0 đến 1000
+    Random random = Random();
+    int randomNumber = random.nextInt(1000);
+
+    // Kết hợp thời gian hiện tại (bao gồm cả giây) và số ngẫu nhiên
+    String uniqueCode = '${now.millisecondsSinceEpoch}$randomNumber';
+
+    return uniqueCode;
+  }
+
   static String getRandomString(int length) =>
       String.fromCharCodes(Iterable.generate(
           length, (_) => _chars.codeUnitAt(Random().nextInt(10))));
