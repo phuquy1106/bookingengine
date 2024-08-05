@@ -149,7 +149,6 @@ class RoomTypeDialog extends StatelessWidget {
                                   await showDialog(
                                       context: context,
                                       builder: (ctx) => EditPictureRoomDialog(
-                                            listPictureRoom: roomtype.imgs,
                                             roomType: roomtype,
                                           ));
                                 },

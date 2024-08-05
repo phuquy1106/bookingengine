@@ -19,10 +19,12 @@ import 'package:flutter_svg/svg.dart';
 import '../util/uimultilanguageutil.dart';
 
 class UiRoom extends StatefulWidget {
-  const UiRoom({super.key, this.roomType, this.number, this.data});
+  const UiRoom(
+      {super.key, this.roomType, this.number, this.data, this.homeController});
   final RoomType? roomType;
   final int? number;
   final Map<String, dynamic>? data;
+  final HomeController? homeController;
   @override
   State<UiRoom> createState() => _UiRoomState();
 }
@@ -36,7 +38,6 @@ class _UiRoomState extends State<UiRoom> {
       "KHÔNG SỢ RỦI RO\nHủy không tốn phí"; // Biến để lưu chuỗi hiển thị
   Timer? timer;
   int currentIndex = 0;
-  HomeController homeController = HomeController();
   List<String> texts = [
     "KHÔNG SỢ RỦI RO\nHủy không tốn phí",
     "Không thanh toán hôm nay",
@@ -56,14 +57,17 @@ class _UiRoomState extends State<UiRoom> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           // Update your state here
-          homeController.addListPrictureRoom(widget.roomType!.id!);
-          homeController.setNumberRoom(widget.number!, widget.roomType!.id!);
-          homeController.setNumberRateRoom(widget.roomType?.listRateRoomTypes);
+          // homeController.addListPrictureRoom(widget.roomType!.id!);
+          widget.homeController!
+              .setNumberRoom(widget.number!, widget.roomType!.id!);
+          widget.homeController!
+              .setNumberRateRoom(widget.roomType?.listRateRoomTypes);
         });
       });
     }
   }
 
+  final GlobalKey key1 = GlobalKey();
   void startTextChange() {
     timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       currentIndex = (currentIndex + 1) % texts.length;
@@ -186,8 +190,11 @@ class _UiRoomState extends State<UiRoom> {
                                         mainAxisSpacing: 4,
                                         crossAxisSpacing: 2,
                                         children: [
-                                          ...homeController
-                                              .listPrictureRoom.keys
+                                          ...widget
+                                              .homeController!
+                                              .listPrictureRoom[
+                                                  widget.roomType!.id]!
+                                              .keys
                                               .take(3)
                                               .map(
                                                 (key) =>
@@ -200,9 +207,11 @@ class _UiRoomState extends State<UiRoom> {
                                                       onEnter: (event) {
                                                         setState(() {
                                                           checkImg = true;
-                                                          urlImg = homeController
+                                                          urlImg = widget
+                                                                  .homeController!
                                                                   .listPrictureRoom[
-                                                              key]!;
+                                                              widget.roomType!
+                                                                  .id]![key]!;
                                                         });
                                                       },
                                                       onExit: (event) {
@@ -211,9 +220,10 @@ class _UiRoomState extends State<UiRoom> {
                                                         });
                                                       },
                                                       child: Image.network(
-                                                        homeController
+                                                        widget.homeController!
                                                                 .listPrictureRoom[
-                                                            key]!,
+                                                            widget.roomType!
+                                                                .id]![key]!,
                                                         fit: BoxFit.cover,
                                                       ),
                                                     ),
@@ -300,7 +310,7 @@ class _UiRoomState extends State<UiRoom> {
                           child: Column(
                             children: widget.roomType!.listRateRoomTypes!
                                 .map((e) => contentMain(
-                                    homeController,
+                                    widget.homeController!,
                                     displayText,
                                     widget.number!,
                                     context,

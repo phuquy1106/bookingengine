@@ -7,7 +7,7 @@ class RoomType {
   final int? child;
   final List<dynamic>? beds;
   final num? price;
-  final List<dynamic>? imgs;
+  final Map<String, dynamic>? imgs;
   final List<dynamic>? facilitesRoom;
   String? id;
   final int? numberRoom;
@@ -44,7 +44,7 @@ class RoomType {
             '<blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: rgb(0, 0, 0);"><font size="6">StudioAllston Hotel is the ideal point of departure for your excursions in Boston(MA). Conveniently located on the Charles River near Harvard University, theproperty offers spacious accommodation, contemporary technology and amplefacilities for an excellent visit to historic Boston.</font></span></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: #000000 "><font size="6">Topfeatures of the property include complimentary parking on-site, full servicerestaurant serving breakfast, lunch and dinner and free wireless internetaccess. Enjoy nearby jogging and bicycle paths, while children will like theplay area across the street.</font></span></p><p class="MsoNormal" style="text-align: justify;"><font style=""><span style="color: rgb(0, 0, 0);"><font style=""><font size="6">&nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</font></font></span></font></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><font style=""><font style=""><span style="color: #000000 "><font size="6">nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</font></span></font></font></p></blockquote><p class="MsoNormal" style="margin-bottom:0cm"></p>',
         price: snapshot['price'] ?? 0,
         adult: snapshot['guest'] ?? 0,
-        imgs: snapshot['imgroom'] ?? [],
+        imgs: snapshot['imgroom'] ?? {},
         facilitesRoom: snapshot['facilitiesroom'] ??
             [
               'bathtub',

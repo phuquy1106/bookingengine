@@ -1,9 +1,7 @@
-import 'package:bookingengine_frontend/contals/neutronbutton.dart';
 import 'package:bookingengine_frontend/contals/neutrontexttilte.dart';
-import 'package:bookingengine_frontend/controller/homecontroller.dart';
 import 'package:bookingengine_frontend/controller/pictureconfigcontroller.dart';
-import 'package:bookingengine_frontend/handler/filehandler.dart';
 import 'package:bookingengine_frontend/manager/generalmanager.dart';
+import 'package:bookingengine_frontend/ui/addpicture.dart';
 import 'package:bookingengine_frontend/util/colorutil.dart';
 import 'package:bookingengine_frontend/util/designmanagement.dart';
 import 'package:bookingengine_frontend/util/materialutil.dart';
@@ -11,7 +9,6 @@ import 'package:bookingengine_frontend/util/messageulti.dart';
 import 'package:bookingengine_frontend/util/neutrontextcontent.dart';
 import 'package:bookingengine_frontend/util/uimultilanguageutil.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:provider/provider.dart';
@@ -36,19 +33,6 @@ class _PictureConfigDialogState extends State<PictureConfigDialog> {
 
   @override
   Widget build(BuildContext context) {
-    void pickImage({String? namePicture}) async {
-      PlatformFile? pickedFile = await FileHandler.pickSingleImage(context);
-      if (pickedFile == null) {
-        return;
-      }
-      String? result = namePicture!.isNotEmpty
-          ? pictureConfigController?.setImageToHotel(pickedFile, namePicture)
-          : pictureConfigController?.addImageToHotel(pickedFile);
-      if (context.mounted && result != MessageCodeUtil.SUCCESS) {
-        MaterialUtil.showAlert(context, result);
-      }
-    }
-
     return Dialog(
       child: ChangeNotifierProvider<PictureConfigController>.value(
         value: pictureConfigController!,
@@ -78,23 +62,6 @@ class _PictureConfigDialogState extends State<PictureConfigDialog> {
                         ),
                       ),
                       backgroundColor: ColorUtil.colorBackgroudMain,
-                      // actions: [
-                      //   if (GeneralManager.hotel!.imgs!.length < 5 &&
-                      //       pictureConfigController.number < 5)
-                      //     InkWell(
-                      //       onTap: () {
-                      //         pickImage();
-                      //       },
-                      //       child: SizedBox(
-                      //         height: 50,
-                      //         width: 50,
-                      //         child: Icon(
-                      //           Icons.add,
-                      //           color: ColorUtil.colorBackgroudText,
-                      //         ),
-                      //       ),
-                      //     )
-                      // ],
                     ),
                     body: Stack(
                       children: [
@@ -156,7 +123,12 @@ class _PictureConfigDialogState extends State<PictureConfigDialog> {
                                                         height: 100,
                                                         child: InkWell(
                                                           onTap: () {
-                                                            pickImage();
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) =>
+                                                                        const AddPicture());
                                                           },
                                                           child: Row(
                                                             children: [
@@ -248,33 +220,6 @@ class _PictureConfigDialogState extends State<PictureConfigDialog> {
                             ]),
                           ),
                         ),
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: NeutronButton(
-                              onPressed: () async {
-                                String? result =
-                                    await pictureConfigController.updateImg();
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                if (result == MessageCodeUtil.SUCCESS) {
-                                  bool? confirmResult =
-                                      await MaterialUtil.showConfirm(
-                                          context,
-                                          MessageUtil.getMessageByCode(
-                                              MessageCodeUtil
-                                                  .TEXTALERT_CHANGE_IMG_SUCCESS_AND_RELOAD));
-                                  if (confirmResult == null || !confirmResult) {
-                                    return;
-                                  }
-                                  HomeController().rebuild();
-                                } else {
-                                  MaterialUtil.showAlert(context,
-                                      MessageUtil.getMessageByCode(result));
-                                }
-                              },
-                              icon: Icons.save,
-                            ))
                       ],
                     ),
                   ),
@@ -284,20 +229,17 @@ class _PictureConfigDialogState extends State<PictureConfigDialog> {
     );
   }
 
-  Widget picture(PictureConfigController pictureConfigController, String key,
-      BuildContext context, bool isElevated) {
+  Widget picture(PictureConfigController pictureConfigController,
+      String nameImg, BuildContext context, bool isElevated) {
     return Stack(
       children: [
         SizedBox(
           width: 400,
           height: 220,
-          child: (pictureConfigController.base64.isNotEmpty) &&
-                  pictureConfigController.namePicture.contains(key)
-              ? Image.memory(pictureConfigController.base64[key]!)
-              : Image.network(
-                  pictureConfigController.listPicture[key]!,
-                  fit: BoxFit.fill,
-                ),
+          child: Image.network(
+            pictureConfigController.listPicture[nameImg]!,
+            fit: BoxFit.fill,
+          ),
         ),
         if (isElevated)
           Positioned(
@@ -306,7 +248,13 @@ class _PictureConfigDialogState extends State<PictureConfigDialog> {
                 children: [
                   InkWell(
                     onTap: () {
-                      //  pickImage(key);
+                      showDialog(
+                          context: context,
+                          builder: (context) => AddPicture(
+                                img: nameImg,
+                                linkImg: pictureConfigController
+                                    .listPicture[nameImg]!,
+                              ));
                     },
                     child:
                         Icon(Icons.edit, color: ColorUtil.colorBackgroudMain),
@@ -317,8 +265,7 @@ class _PictureConfigDialogState extends State<PictureConfigDialog> {
                   InkWell(
                     onTap: () async {
                       String? result = await pictureConfigController
-                          .deleteImageFromFirestore(
-                              pictureConfigController.listPicture[key]!, key);
+                          .deleteImageFromFirestore(nameImg);
                       if (context.mounted) {
                         MaterialUtil.showAlert(
                             context, MessageUtil.getMessageByCode(result));

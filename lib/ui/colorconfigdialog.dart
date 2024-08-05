@@ -480,10 +480,9 @@ class ColorConfigController extends ChangeNotifier {
     colors['button'] = <String, Color>{};
     colors['appbar'] = <String, Color>{};
     print(GeneralManager.hotel!.colors!);
-    if (GeneralManager.hotel!.colors!.isEmpty) {
-      colors['background']!['text'] =
-          ColorManagement.bookingNameOfCheckinBooking;
-      colors['background']!['main'] = ColorManagement.checkinBooking;
+    if (GeneralManager.hotel!.colors == null) {
+      colors['background']!['text'] = Colors.black;
+      colors['background']!['main'] = ColorManagement.white;
 
       colors['button']!['text'] = ColorManagement.bookingNameOfBookedBooking;
       colors['button']!['main'] = ColorManagement.bookedBooking;
@@ -491,20 +490,33 @@ class ColorConfigController extends ChangeNotifier {
       colors['appbar']!['text'] = ColorManagement.bookingNameOfBookedBooking;
       colors['appbar']!['main'] = ColorManagement.bookedBooking;
     } else {
-      colors['background']!['text'] =
-          Color(GeneralManager.hotel!.colors!['background']['text']);
-      colors['background']!['main'] =
-          Color(GeneralManager.hotel!.colors!['background']['main']);
-
-      colors['button']!['text'] =
-          Color(GeneralManager.hotel!.colors!['button']['text']);
-      colors['button']!['main'] =
-          Color(GeneralManager.hotel!.colors!['button']['main']);
-
-      colors['appbar']!['text'] =
-          Color(GeneralManager.hotel!.colors!['appbar']['text']);
-      colors['appbar']!['main'] =
-          Color(GeneralManager.hotel!.colors!['appbar']['main']);
+      if (GeneralManager.hotel?.colors?['background'] != null) {
+        colors['background']!['text'] =
+            Color(GeneralManager.hotel!.colors!['background']['text']);
+        colors['background']!['main'] =
+            Color(GeneralManager.hotel!.colors!['background']['main']);
+      } else {
+        colors['background']!['text'] = Colors.black;
+        colors['background']!['main'] = ColorManagement.white;
+      }
+      if (GeneralManager.hotel?.colors?['button'] != null) {
+        colors['button']!['text'] =
+            Color(GeneralManager.hotel!.colors!['button']['text']);
+        colors['button']!['main'] =
+            Color(GeneralManager.hotel!.colors!['button']['main']);
+      } else {
+        colors['button']!['text'] = ColorManagement.bookingNameOfBookedBooking;
+        colors['button']!['main'] = ColorManagement.bookedBooking;
+      }
+      if (GeneralManager.hotel?.colors?['appbar'] != null) {
+        colors['appbar']!['text'] =
+            Color(GeneralManager.hotel!.colors!['appbar']['text']);
+        colors['appbar']!['main'] =
+            Color(GeneralManager.hotel!.colors!['appbar']['main']);
+      } else {
+        colors['appbar']!['text'] = ColorManagement.bookingNameOfBookedBooking;
+        colors['appbar']!['main'] = ColorManagement.bookedBooking;
+      }
     }
   }
 
@@ -520,6 +532,12 @@ class ColorConfigController extends ChangeNotifier {
     if (GeneralManager.hotel!.colors!.isEmpty) {
       return true;
     }
+    if (GeneralManager.hotel!.colors?['background'] == null ||
+        GeneralManager.hotel!.colors?['appbar'] == null ||
+        GeneralManager.hotel!.colors?['button'] == null) {
+      return true;
+    }
+
     if (GeneralManager.hotel!.colors!['background']['text'] !=
             colors['background']!['text']!.value ||
         GeneralManager.hotel!.colors!['background']['main'] !=

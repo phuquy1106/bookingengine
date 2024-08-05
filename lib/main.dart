@@ -22,6 +22,7 @@ void main() async {
   final GeneralManager generalManager = GeneralManager();
   // await GeneralManager.addRoomType();
   await GeneralManager.getUsersOfHotel();
+  await GeneralManager.getRoomTypes();
   await GeneralManager.getPolicy2();
   await generalManager.loadLocalStorage();
   runApp(
