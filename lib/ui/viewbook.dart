@@ -5,13 +5,22 @@ import 'package:bookingengine_frontend/ui/bookingform.dart';
 import 'package:bookingengine_frontend/ui/confirmbooking.dart';
 import 'package:bookingengine_frontend/ui/congratulations.dart';
 import 'package:bookingengine_frontend/util/materialutil.dart';
+import 'package:bookingengine_frontend/util/neutrontextformfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BookView extends StatefulWidget {
-  const BookView({super.key, this.data, this.roomType, this.rateRoomType});
+  const BookView(
+      {super.key,
+      this.data,
+      this.roomType,
+      this.rateRoomType,
+      this.teNums,
+      this.pricePerNight});
   final RoomType? roomType;
   final RateRoomTypes? rateRoomType;
+  final Map<String, Map<String, List<num>>>? pricePerNight;
+  final Map<String, Map<String, NeutronInputNumberController>>? teNums;
   final Map<String, dynamic>? data;
   @override
   State<BookView> createState() => _BookViewState();
@@ -20,8 +29,26 @@ class BookView extends StatefulWidget {
 class _BookViewState extends State<BookView> {
   BookingFormController? controller;
   final ScrollPhysics scrollPhysics = const ClampingScrollPhysics();
+  final Map<String, Map<String, num>> dataRoom = {};
   @override
   void initState() {
+    print(widget.teNums);
+    for (var key in widget.teNums!.keys) {
+      for (var e in widget.teNums![key]!.keys) {
+        if (dataRoom.containsKey(key)) {
+          if (widget.teNums![key]![e]!.getNumber()! > 0) {
+            dataRoom[key]!.addAll({e: widget.teNums![key]![e]!.getNumber()!});
+          }
+        } else {
+          if (widget.teNums![key]![e]!.getNumber()! > 0) {
+            dataRoom.addAll({
+              key: {e: widget.teNums![key]![e]!.getNumber()!}
+            });
+          }
+        }
+      }
+    }
+    print(dataRoom);
     controller = BookingFormController();
     super.initState();
   }
@@ -69,7 +96,7 @@ class _BookViewState extends State<BookView> {
                 const SizedBox(
                   width: 20,
                 ),
-                stepsWidget(4, 'form booking', controller),
+                stepsWidget(4, 'Chúc mừng', controller),
               ],
             ),
           ),
@@ -80,16 +107,23 @@ class _BookViewState extends State<BookView> {
                 BookingFormWigget(
                     controller: controller,
                     data: widget.data,
+                    pricePerNight: widget.pricePerNight,
                     rateRoomType: widget.rateRoomType,
+                    teNums: dataRoom,
                     roomType: widget.roomType),
                 ConfirmBooking(
                     controller: controller,
                     data: widget.data!,
+                    teNums: dataRoom,
+                    email: controller.teEmail!.text,
+                    pricePerNight: widget.pricePerNight,
                     rateRoomType: widget.rateRoomType,
                     roomType: widget.roomType),
                 BookingFormWigget(
                     controller: controller,
                     data: widget.data,
+                    pricePerNight: widget.pricePerNight,
+                    teNums: dataRoom,
                     rateRoomType: widget.rateRoomType,
                     roomType: widget.roomType),
                 const Congratulations()

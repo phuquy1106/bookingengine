@@ -9,20 +9,14 @@
 
 import 'package:flutter/widgets.dart';
 
-class $AssetsFontsGen {
-  const $AssetsFontsGen();
+class $AssetsAnimationGen {
+  const $AssetsAnimationGen();
 
-  /// File path: assets/fonts/Orev-Bold.ttf
-  String get orevBold => 'assets/fonts/Orev-Bold.ttf';
-
-  /// File path: assets/fonts/Orev-ExtraBold.ttf
-  String get orevExtraBold => 'assets/fonts/Orev-ExtraBold.ttf';
-
-  /// File path: assets/fonts/arial.ttf
-  String get arial => 'assets/fonts/arial.ttf';
+  /// File path: assets/animation/congratulations.json
+  String get congratulations => 'assets/animation/congratulations.json';
 
   /// List of all assets
-  List<String> get values => [orevBold, orevExtraBold, arial];
+  List<String> get values => [congratulations];
 }
 
 class $AssetsIconGen {
@@ -294,7 +288,7 @@ class $AssetsIconFacilitiesRoomtypeGen {
 class Assets {
   Assets._();
 
-  static const $AssetsFontsGen fonts = $AssetsFontsGen();
+  static const $AssetsAnimationGen animation = $AssetsAnimationGen();
   static const $AssetsIconGen icon = $AssetsIconGen();
   static const $AssetsImgGen img = $AssetsImgGen();
 }

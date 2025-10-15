@@ -31,9 +31,15 @@ class GeneralManager extends ChangeNotifier {
   static Map<String, String> listFontText = {
     'aria': FontFamily.aria,
     'inter': FontFamily.inter,
-    'overbole': FontFamily.orevBold,
     'static': FontFamily.static,
-    'timesnewroman': FontFamily.timesNewRoman
+    'timesnewroman': FontFamily.timesNewRoman,
+    'orev': FontFamily.orev,
+    'chivo': FontFamily.chivo,
+    'mont': FontFamily.mont,
+    'mijas': FontFamily.mijas,
+    'nabila': FontFamily.nabila,
+    'pony': FontFamily.pony,
+    'merri': FontFamily.merri,
   };
   static Map<String, String> listFacilitiesRoom = {
     UITitleCode.BATHTUB: Assets.icon.facilitiesRoomtype.bathtub,
@@ -129,115 +135,9 @@ class GeneralManager extends ChangeNotifier {
       print(value);
       Map<String, dynamic> data = value.data as Map<String, dynamic>;
       hotel = HotelModel.fromSnapshot(data, GeneralManager.idHotel);
+      print(GeneralManager.hotel!.colors?['background']['main'] == []);
+      print('--------------');
     }).onError((error, stackTrace) {});
-  }
-
-  static addRoomType() {
-    listRoomTypes.add(RoomType(
-        id: '001',
-        adult: 3,
-        child: 2,
-        beds: ['S'],
-        describeRoom:
-            '<blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: rgb(0, 0, 0);"><font size="5">StudioAllston Hotel is the ideal point of departure for your excursions in Boston(MA). Conveniently located on the Charles River near Harvard University, theproperty offers spacious accommodation, contemporary technology and amplefacilities for an excellent visit to historic Boston.</font></span></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: #000000 "><font size="5">Topfeatures of the property include complimentary parking on-site, full servicerestaurant serving breakfast, lunch and dinner and free wireless internetaccess. Enjoy nearby jogging and bicycle paths, while children will like theplay area across the street.</font></span></p><p class="MsoNormal" style="text-align: justify;"><font style=""><span style="color: rgb(0, 0, 0);"><font style="" size="5">&nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</font></span></font></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><font style=""><font style="" size="5"><span style="color: #000000 ">nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</span></font></font></p></blockquote><p class="MsoNormal" style="margin-bottom:0cm"></p>',
-        facilitesRoom: [
-          'airport-transport',
-          'air-conditioning',
-          'fitness-center'
-        ],
-        imgs: [
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b'
-        ],
-        name: 'N001',
-        price: 200000,
-        numberRoom: 3));
-    listRoomTypes.add(RoomType(
-        id: '002',
-        adult: 3,
-        child: 2,
-        beds: ['S'],
-        describeRoom:
-            '<blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: rgb(0, 0, 0);"><font size="5">StudioAllston Hotel is the ideal point of departure for your excursions in Boston(MA). Conveniently located on the Charles River near Harvard University, theproperty offers spacious accommodation, contemporary technology and amplefacilities for an excellent visit to historic Boston.</font></span></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: #000000 "><font size="5">Topfeatures of the property include complimentary parking on-site, full servicerestaurant serving breakfast, lunch and dinner and free wireless internetaccess. Enjoy nearby jogging and bicycle paths, while children will like theplay area across the street.</font></span></p><p class="MsoNormal" style="text-align: justify;"><font style=""><span style="color: rgb(0, 0, 0);"><font style="" size="5">&nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</font></span></font></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><font style=""><font style="" size="5"><span style="color: #000000 ">nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</span></font></font></p></blockquote><p class="MsoNormal" style="margin-bottom:0cm"></p>',
-        facilitesRoom: [
-          'airport-transport',
-          'air-conditioning',
-          'fitness-center'
-        ],
-        imgs: [
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b'
-        ],
-        name: 'N002',
-        price: 300000,
-        numberRoom: 4));
-    listRoomTypes.add(RoomType(
-        id: '003',
-        adult: 3,
-        child: 2,
-        beds: ['S'],
-        describeRoom:
-            '<blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: rgb(0, 0, 0);"><font size="5">StudioAllston Hotel is the ideal point of departure for your excursions in Boston(MA). Conveniently located on the Charles River near Harvard University, theproperty offers spacious accommodation, contemporary technology and amplefacilities for an excellent visit to historic Boston.</font></span></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: #000000 "><font size="5">Topfeatures of the property include complimentary parking on-site, full servicerestaurant serving breakfast, lunch and dinner and free wireless internetaccess. Enjoy nearby jogging and bicycle paths, while children will like theplay area across the street.</font></span></p><p class="MsoNormal" style="text-align: justify;"><font style=""><span style="color: rgb(0, 0, 0);"><font style="" size="5">&nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</font></span></font></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><font style=""><font style="" size="5"><span style="color: #000000 ">nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</span></font></font></p></blockquote><p class="MsoNormal" style="margin-bottom:0cm"></p>',
-        facilitesRoom: [
-          'airport-transport',
-          'air-conditioning',
-          'fitness-center'
-        ],
-        imgs: [
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b'
-        ],
-        name: 'N003',
-        price: 400000,
-        numberRoom: 2));
-    listRoomTypes.add(RoomType(
-        id: '004',
-        adult: 3,
-        child: 2,
-        beds: ['S'],
-        describeRoom:
-            '<blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: rgb(0, 0, 0);"><font size="5">StudioAllston Hotel is the ideal point of departure for your excursions in Boston(MA). Conveniently located on the Charles River near Harvard University, theproperty offers spacious accommodation, contemporary technology and amplefacilities for an excellent visit to historic Boston.</font></span></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: #000000 "><font size="5">Topfeatures of the property include complimentary parking on-site, full servicerestaurant serving breakfast, lunch and dinner and free wireless internetaccess. Enjoy nearby jogging and bicycle paths, while children will like theplay area across the street.</font></span></p><p class="MsoNormal" style="text-align: justify;"><font style=""><span style="color: rgb(0, 0, 0);"><font style="" size="5">&nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</font></span></font></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><font style=""><font style="" size="5"><span style="color: #000000 ">nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</span></font></font></p></blockquote><p class="MsoNormal" style="margin-bottom:0cm"></p>',
-        facilitesRoom: [
-          'airport-transport',
-          'air-conditioning',
-          'fitness-center'
-        ],
-        imgs: [
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b'
-        ],
-        name: 'N004',
-        price: 700000,
-        numberRoom: 8));
-    listRoomTypes.add(RoomType(
-        id: '005',
-        adult: 3,
-        child: 2,
-        beds: ['S'],
-        describeRoom:
-            '<blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: rgb(0, 0, 0);"><font size="5">StudioAllston Hotel is the ideal point of departure for your excursions in Boston(MA). Conveniently located on the Charles River near Harvard University, theproperty offers spacious accommodation, contemporary technology and amplefacilities for an excellent visit to historic Boston.</font></span></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><span style="color: #000000 "><font size="5">Topfeatures of the property include complimentary parking on-site, full servicerestaurant serving breakfast, lunch and dinner and free wireless internetaccess. Enjoy nearby jogging and bicycle paths, while children will like theplay area across the street.</font></span></p><p class="MsoNormal" style="text-align: justify;"><font style=""><span style="color: rgb(0, 0, 0);"><font style="" size="5">&nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</font></span></font></p><p class="MsoNormal" style="text-align: justify; margin-bottom: 0cm;"><font style=""><font style="" size="5"><span style="color: #000000 ">nbsp;All rooms exude an atmosphereof total peace and harmony that feature thoughtful amenities to ensure anunparalleled sense of comfort for the guests such as air conditioning, heating,satellite/cable channels, ironing facilities and toiletries. Studio AllstonHotel is an ideal place of stay for travelers seeking charm, comfort andconvenience in Boston (MA).</span></font></font></p></blockquote><p class="MsoNormal" style="margin-bottom:0cm"></p>',
-        facilitesRoom: [
-          'airport-transport',
-          'air-conditioning',
-          'fitness-center'
-        ],
-        imgs: [
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b'
-        ],
-        name: 'N005',
-        price: 500000,
-        numberRoom: 5));
   }
 
   Future<void> loadLocalStorage() async {

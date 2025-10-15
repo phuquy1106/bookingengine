@@ -1,4 +1,5 @@
 import 'package:bookingengine_frontend/manager/generalmanager.dart';
+import 'package:bookingengine_frontend/model/rateroomtypes.dart';
 import 'package:bookingengine_frontend/model/roomtype.dart';
 import 'package:bookingengine_frontend/util/dateutil.dart';
 import 'package:bookingengine_frontend/util/messageulti.dart';
@@ -11,11 +12,14 @@ import 'package:intl/intl.dart';
 
 class HomeController extends ChangeNotifier {
   Map<String, String> listPrictureHotel = {};
-  Map<String, String> listPrictureRoom = {};
+  Map<String, Map<String, String>> listPrictureRoom = {};
+  GlobalKey globalKey = GlobalKey();
+  ScrollController scrollController = ScrollController();
 
   TextEditingController? teName, teEmail, tePhone, teNotes;
   Map<String, Map<String, NeutronInputNumberController>>? teNums = {};
   Map<String, dynamic> data = {};
+  Map<String, Map<String, List<num>>> pricePerNight = {};
   List<DateTime> listDate = [];
   Map<String, dynamic> listMonthAndDay = {};
   DateTime? inDate, outDate;
@@ -23,8 +27,8 @@ class HomeController extends ChangeNotifier {
   num total = 0;
   Map<String, dynamic> listNumberRoom = {};
   List<RoomType> listRoomTypes = [];
-  String numberR = '0';
-  List<String> listRoom = [];
+  Map<String, String> numberR = {};
+  Map<String, List<String>> listRoom = {};
   bool isLoading = false;
   String startDay = '';
   String endDay = '';
@@ -34,7 +38,6 @@ class HomeController extends ChangeNotifier {
           TextEditingController(text: 0.toString())),
       teNumberRoom = NeutronInputNumberController(
           TextEditingController(text: 0.toString()));
-  int index = 0;
   List<dynamic> listFacilities = [];
   Map<String, String> hotelFacilities = {
     UITitleCode.AIR_CONDITIONING: 'assets/icon/facilities_hotel/air-con.svg',
@@ -110,32 +113,101 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  setNumberRoom(int numberRoom) {
-    listRoom.clear();
+  setNumberRoom(int numberRoom, String roomTypeId) {
+    listRoom[roomTypeId] = [];
+    List<String> listNumber = [];
     for (var i = 0; i <= numberRoom; i++) {
-      listRoom.add(i.toString());
+      listNumber.add(i.toString());
     }
+    listRoom[roomTypeId] = listNumber;
     notifyListeners();
   }
 
-  setRoom(String number, String roomTypeID, String rateId) {
-    if (number == numberR) {
-      return;
-    }
-    if (teNums != {}) {
-      for (var element in teNums!.keys) {
-        for (var key in teNums![element]!.keys) {
-          if (key != rateId) {
-            teNums![element]![key] = NeutronInputNumberController(
-                TextEditingController(text: number));
-          } else {}
-        }
+  setNumberRateRoom(List<RateRoomTypes>? list) {
+    if (list != null) {
+      for (var value in list) {
+        numberR[value.id!] = '0';
       }
     }
 
-    print(teNums![roomTypeID]);
-    print(teNums);
-    numberR = number;
+    notifyListeners();
+  }
+
+  setRoom(String number, String roomTypeID, String rateId, int totalNumberRoom,
+      num priceRoom) {
+    if (number == numberR[rateId]) {
+      return;
+    }
+    List<num> listPrice = [];
+
+    num totalRoom = 0;
+    if (teNums!.isNotEmpty) {
+      if (!teNums!.containsKey(roomTypeID)) {
+        teNums!.addAll({
+          roomTypeID: {
+            rateId: NeutronInputNumberController(
+                TextEditingController(text: number))
+          }
+        });
+      }
+      for (var element in teNums!.keys) {
+        if (teNums![element]!.keys.contains(rateId)) {
+          teNums![element]![rateId] =
+              NeutronInputNumberController(TextEditingController(text: number));
+        } else {
+          if (element == roomTypeID) {
+            teNums![element]!.addAll({
+              rateId: NeutronInputNumberController(
+                  TextEditingController(text: number))
+            });
+          }
+        }
+        for (var value in teNums![element]!.values) {
+          if (element == roomTypeID) {
+            totalRoom = totalRoom + value.getNumber()!;
+          }
+        }
+        if (totalRoom > totalNumberRoom) {
+          teNums![element]![rateId] = NeutronInputNumberController(
+              TextEditingController(text: numberR[rateId]));
+          return;
+        }
+      }
+    } else {
+      teNums = {
+        roomTypeID: {
+          rateId:
+              NeutronInputNumberController(TextEditingController(text: number))
+        }
+      };
+    }
+    if (int.parse(number) == 0) {
+      if (pricePerNight.containsKey(roomTypeID)) {
+        if (pricePerNight[roomTypeID]!.containsKey(rateId)) {
+          pricePerNight[roomTypeID]!.remove(rateId);
+          if (pricePerNight[roomTypeID]!.isEmpty) {
+            pricePerNight.remove(roomTypeID);
+          }
+        }
+      }
+    } else {
+      for (var i = 1; i < listDate.length; i++) {
+        listPrice.add(priceRoom);
+      }
+      if (pricePerNight.containsKey(roomTypeID)) {
+        if (pricePerNight[roomTypeID]!.containsKey(rateId)) {
+          pricePerNight[roomTypeID]![rateId] = listPrice;
+        } else {
+          pricePerNight[roomTypeID]!.addAll({rateId: listPrice});
+        }
+      } else {
+        pricePerNight.addAll({
+          roomTypeID: {rateId: listPrice}
+        });
+      }
+    }
+    print(pricePerNight);
+    numberR[rateId] = number;
     notifyListeners();
   }
 
@@ -159,40 +231,35 @@ class HomeController extends ChangeNotifier {
         listPrictureHotel['$i'] = listImg[i];
       }
     } else {
-      for (int i = 0; i < GeneralManager.hotel!.imgs!.length; i++) {
-        listPrictureHotel['$i'] = GeneralManager.hotel!.imgs![i];
+      for (var key in GeneralManager.hotel!.imgs!.keys) {
+        listPrictureHotel[key] = GeneralManager.hotel!.imgs![key];
       }
     }
 
     notifyListeners();
   }
 
-  addListPrictureRoom(String id) {
+  Future<void> addListPrictureRoom(
+      String id, Map<String, dynamic> mapImg) async {
     List<String> listImg = [];
-    for (var element
-        in GeneralManager.listRoomTypes.where((element) => element.id == id)) {
-      if (element.imgs!.isEmpty) {
-        listImg.addAll([
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh4.jpg?alt=media&token=a7a232f5-9c67-4278-8418-d4a6a524cc74',
-          'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh2.jpg?alt=media&token=22459229-f0b1-4d3f-8420-a384a04aac7b',
-        ]);
-        for (var i = 0; i < listImg.length; i++) {
-          listPrictureRoom['$i'] = listImg[i];
-        }
-      } else {
-        for (var i = 0; i < element.imgs!.length; i++) {
-          listPrictureRoom['$i'] = element.imgs![i];
-        }
+    Map<String, String> img = {};
+    if (mapImg.isEmpty) {
+      listImg.addAll([
+        'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
+        'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh4.jpg?alt=media&token=a7a232f5-9c67-4278-8418-d4a6a524cc74',
+        'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh2.jpg?alt=media&token=22459229-f0b1-4d3f-8420-a384a04aac7b',
+        'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh2.jpg?alt=media&token=22459229-f0b1-4d3f-8420-a384a04aac7b',
+        'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh2.jpg?alt=media&token=22459229-f0b1-4d3f-8420-a384a04aac7b',
+      ]);
+      for (var i = 0; i < listImg.length; i++) {
+        img[i.toString()] = listImg[i];
+      }
+    } else {
+      for (var key in mapImg.keys) {
+        img[key] = mapImg[key];
       }
     }
-    notifyListeners();
-  }
-
-  void changeScreenByIndex(int newIndex) {
-    if (index == newIndex) return;
-    index = newIndex;
-    notifyListeners();
+    listPrictureRoom[id] = img;
   }
 
   void setInDate(DateTime? inDate2) async {
@@ -361,7 +428,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<String> search() async {
-    listRoomTypes.clear();
+    // listRoomTypes.clear();
     if (listMonthAndDay.isEmpty) {
       return 'Vui lòng chọn ngày';
     }
@@ -373,7 +440,12 @@ class HomeController extends ChangeNotifier {
     }
     isLoading = true;
     notifyListeners();
-    listRoomTypes = await GeneralManager.getRoomTypes();
+    listRoomTypes = GeneralManager.listRoomTypes;
+    for (var i = 0; i < listRoomTypes.length; i++) {
+      await addListPrictureRoom(
+          listRoomTypes[i].id!, listRoomTypes[i].imgs ?? {});
+    }
+
     String result = await FirebaseFunctions.instance
         .httpsCallable('bookingengine-getnumberroom')
         .call({
@@ -415,5 +487,28 @@ class HomeController extends ChangeNotifier {
     data['note'] = teNotes!.text;
     data['totalprice'] = total;
     return MessageCodeUtil.SUCCESS;
+  }
+
+  void scrollToUiRoom() {
+    if (scrollController.hasClients) {
+      final RenderBox renderBox =
+          globalKey.currentContext!.findRenderObject() as RenderBox;
+      final position = renderBox.localToGlobal(Offset.zero).dy -
+          AppBar().preferredSize.height;
+      print(position);
+      scrollController.animateTo(
+        1878.72,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void scrollToTop() {
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 }

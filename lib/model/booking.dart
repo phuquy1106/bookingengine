@@ -1,4 +1,5 @@
 import 'package:bookingengine_frontend/manager/generalmanager.dart';
+import 'package:bookingengine_frontend/model/subbooking.dart';
 import 'package:bookingengine_frontend/util/dateutil.dart';
 import 'package:bookingengine_frontend/util/messageulti.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,10 +20,11 @@ class Booking {
   int? bookingType;
   String? roomTypeID;
   String? room;
-  List<num>? price;
+  List<dynamic>? price;
   int? lengthStay;
   int? lengthRender;
   String? bed;
+  List<Subbooking>? subbooking;
   bool? breakfast = false;
   bool? lunch = false;
   bool? dinner = false;
@@ -47,12 +49,14 @@ class Booking {
   bool? isPriceFirstMonthly = false;
   List<dynamic>? declareGuests = [];
   Map<String, dynamic>? declareInfo = {};
+  Map<String, dynamic>? pricePerNight = {};
   Map<String, dynamic>? paymentDetails = {};
   Map<String, dynamic>? costDetails = {};
   Map<String, dynamic>? discountDetails = {};
   Map<String, dynamic>? depositDetails = {};
   Map<String, dynamic>? electricityDetails = {};
   Map<String, dynamic>? waterDetails = {};
+  Map<String, Map<String, num>>? teNums = {};
   num? totalDepositPayment;
   num? totalRoomCharge;
   num? deposit;
@@ -71,7 +75,9 @@ class Booking {
   String? country;
   String? typeTourists;
   String? notes;
+  String? idBookingVnPay;
   num? rentingBikes;
+  num? totalAmount;
   num? totalCost;
   int? statusPayment;
   String? creator;
@@ -90,10 +96,14 @@ class Booking {
     this.inDate,
     this.outDate,
     this.inTime,
+    this.subbooking,
     this.outTime,
     this.numberRoom,
     this.cancelled,
+    this.teNums,
     this.status,
+    this.idBookingVnPay,
+    this.totalAmount,
     this.bookingType,
     this.roomTypeID,
     this.room,
@@ -140,6 +150,7 @@ class Booking {
     this.discountDetails,
     this.electricityDetails,
     this.waterDetails,
+    this.pricePerNight,
     this.otaDeposit,
     this.notes,
     this.subBookings,
@@ -155,6 +166,46 @@ class Booking {
     lengthRender = lengthStay;
   }
 
+  factory Booking.fromBooking(Map<String, dynamic> data) {
+    return Booking(
+        id: data['id'],
+        sID: data['sID'] ?? '',
+        name: data['name'] ?? '',
+        email: data['email'] ?? '',
+        phone: data['phone'] ?? '',
+        notes: data['notes'] ?? '',
+        status: data['status'] ?? 0,
+        inDate: DateUtil.timestampToDateTime(
+            data['in_date'] as Map<String, dynamic>),
+        outDate: DateUtil.timestampToDateTime(
+            data['out_date'] as Map<String, dynamic>),
+        roomTypeID: data['room_type'] ?? '',
+        room: data['room'] ?? '',
+        price: data['price'] ?? []);
+  }
+  factory Booking.fromBookingGroup(Map<String, dynamic> data) {
+    List<Subbooking> listSubBooking = [];
+    if (data['subbooking'] != null) {
+      Map<String, dynamic> dataSubbooking = data['subbooking'];
+      for (var key in dataSubbooking.keys) {
+        listSubBooking
+            .add(Subbooking.snapshot(id: key, data: dataSubbooking[key]));
+      }
+    }
+    return Booking(
+        id: data['id'],
+        sID: data['sID'] ?? '',
+        name: data['name'] ?? '',
+        email: data['email'] ?? '',
+        phone: data['phone'] ?? '',
+        notes: data['notes'] ?? '',
+        status: data['status'] ?? 0,
+        inDate: DateUtil.timestampToDateTime(
+            data['in_date'] as Map<String, dynamic>),
+        outDate: DateUtil.timestampToDateTime(
+            data['out_date'] as Map<String, dynamic>),
+        subbooking: listSubBooking);
+  }
   Future<String> add() async {
     if (lengthStay! > GeneralManager.maxLengthStay) {
       return MessageCodeUtil.OVER_MAX_LENGTHDAY_31;
@@ -185,6 +236,7 @@ class Booking {
       'list_room_type': {roomTypeID: numberRoom},
       'source': sourceID,
       'sid': sID,
+      'teNums': teNums,
       'phone': phone,
       'email': email,
       'breakfast': breakfast,
@@ -196,6 +248,7 @@ class Booking {
       'status': status,
       'group': group,
       'price': price,
+      'price_per_night': pricePerNight,
       'tax_declare': isTaxDeclare,
       'list_guest_declaration': declareGuests,
       'declaration_invoice_detail': declareInfo,
@@ -205,13 +258,19 @@ class Booking {
       'saler': saler,
       'external_saler': externalSaler,
       'booking_type': bookingType,
+      'idBookingVnPay': idBookingVnPay,
+      'totalAmount': totalAmount,
       "isfristmonthly": isPriceFirstMonthly
     };
     try {
-      HttpsCallable callable = FirebaseFunctions.instance
-          .httpsCallable('bookingengine-addBookingBookingEngine');
-      await callable(bookingAdd);
-      return MessageCodeUtil.SUCCESS;
+      String res = await FirebaseFunctions.instance
+          .httpsCallable('bookingengine-addBookingBookingEngine')
+          .call(bookingAdd)
+          .then((value) {
+        String result = value.data as String;
+        return result;
+      });
+      return res;
     } on FirebaseFunctionsException catch (error) {
       return error.message!;
     }

@@ -12,7 +12,7 @@ class HotelModel {
   List<dynamic>? hotelFacilities;
   String? layoutHotel;
   String? layoutRoom;
-  List<dynamic>? imgs;
+  Map<String, dynamic>? imgs;
   String? describe;
   HotelModel(
       {this.id,
@@ -75,7 +75,7 @@ class HotelModel {
       email: doc['email'] ?? '',
       phone: doc['phone'] ?? '',
       describe: doc['describe'] ?? '',
-      imgs: doc['imghotel'] ?? [],
+      imgs: doc['imghotel'] ?? {},
       hotelFacilities: doc['hotelfacilities'] ??
           [
             UITitleCode.AIR_CONDITIONING,
@@ -90,7 +90,7 @@ class HotelModel {
           ],
       colors: doc['colors'] ?? {},
       // roomType: listNewRoomType,
-      font: doc['font'] ?? 'static',
+      font: doc['font_text'] ?? 'static',
       layoutHotel: doc['layouthotel'] ?? 'layout01',
       layoutRoom: doc['layoutroom'] ?? 'layout01',
     );

@@ -13,11 +13,29 @@ class FontFamily {
   /// Font family: aria
   static const String aria = 'aria';
 
+  /// Font family: chivo
+  static const String chivo = 'chivo';
+
   /// Font family: inter
   static const String inter = 'inter';
 
-  /// Font family: orev_bold
-  static const String orevBold = 'orev_bold';
+  /// Font family: merri
+  static const String merri = 'merri';
+
+  /// Font family: mijas
+  static const String mijas = 'mijas';
+
+  /// Font family: mont
+  static const String mont = 'mont';
+
+  /// Font family: nabila
+  static const String nabila = 'nabila';
+
+  /// Font family: orev
+  static const String orev = 'orev';
+
+  /// Font family: pony
+  static const String pony = 'pony';
 
   /// Font family: robo
   static const String robo = 'robo';

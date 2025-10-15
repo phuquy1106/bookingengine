@@ -68,6 +68,9 @@ dependencies:
   readmore: ^2.2.0
   sprintf: ^7.0.0
   lottie: ^2.7.0
+  http: ^1.1.0
+  flutter_email_sender: ^6.0.3
+  mailer: ^6.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -116,15 +119,9 @@ flutter:
             - asset: assets/fonts/times_new_roman/times_new_roman_bold.ttf
             - asset: assets/fonts/times_new_roman/times_new_roman_bold_italic.ttf
             - asset: assets/fonts/times_new_roman/times_new_roman_italic.ttf
-    - family: orev_bold
-      fonts:
-            - asset: assets/fonts/Orev-Bold.ttf
-    - family: orev_bold
-      fonts:
-            - asset: assets/fonts/Orev-Bold.ttf
     - family: aria
       fonts:
-            - asset: assets/fonts/arial.ttf
+            - asset: assets/fonts/aria/arial.ttf
     - family: robo
       fonts:
             - asset: assets/fonts/robo/Roboto-Black.ttf
@@ -150,7 +147,36 @@ flutter:
             - asset: assets/fonts/inter/Inter-Regular.ttf
             - asset: assets/fonts/inter/Inter-SemiBold.ttf
             - asset: assets/fonts/inter/Inter-Thin.ttf
-
+    - family: orev
+      fonts:
+            - asset: assets/fonts/orev/Orev-Bold.ttf
+            - asset: assets/fonts/orev/Orev-ExtraBold.ttf
+    - family: chivo
+      fonts:
+            - asset: assets/fonts/chivo/ChivoMono-Italic-VariableFont_wght.ttf
+            - asset: assets/fonts/chivo/ChivoMono-VariableFont_wght.ttf
+    - family: mont
+      fonts:
+            - asset: assets/fonts/mont/Montserrat-VariableFont_wght.ttf
+    - family: mijas
+      fonts:
+            - asset: assets/fonts/mijas/Mijas-Ultra.otf
+    - family: merri
+      fonts:
+            - asset: assets/fonts/merri/Merriweather-Black.ttf
+            - asset: assets/fonts/merri/Merriweather-BlackItalic.ttf
+            - asset: assets/fonts/merri/Merriweather-Bold.ttf
+            - asset: assets/fonts/merri/Merriweather-BoldItalic.ttf
+            - asset: assets/fonts/merri/Merriweather-Italic.ttf
+            - asset: assets/fonts/merri/Merriweather-Light.ttf
+            - asset: assets/fonts/merri/Merriweather-LightItalic.ttf
+            - asset: assets/fonts/merri/Merriweather-Regular.ttf
+    - family: nabila
+      fonts:
+            - asset: assets/fonts/nabila/Nabila.ttf
+    - family: pony
+      fonts:
+            - asset: assets/fonts/pony/Pony.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

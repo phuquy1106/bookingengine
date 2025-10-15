@@ -1,16 +1,15 @@
-import 'package:bookingengine_frontend/contals/neutronbutton.dart';
 import 'package:bookingengine_frontend/contals/neutrontexttilte.dart';
 import 'package:bookingengine_frontend/controller/editroomtypecontroller.dart';
 import 'package:bookingengine_frontend/gen/assets.gen.dart';
-import 'package:bookingengine_frontend/handler/filehandler.dart';
 import 'package:bookingengine_frontend/model/roomtype.dart';
+import 'package:bookingengine_frontend/ui/addtoroom.dart';
 import 'package:bookingengine_frontend/util/colorutil.dart';
 import 'package:bookingengine_frontend/util/designmanagement.dart';
 import 'package:bookingengine_frontend/util/materialutil.dart';
 import 'package:bookingengine_frontend/util/messageulti.dart';
 import 'package:bookingengine_frontend/util/neutrontextcontent.dart';
 import 'package:bookingengine_frontend/util/uimultilanguageutil.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +17,7 @@ import 'package:provider/provider.dart';
 import 'editfacilitiesroomdialog.dart';
 
 class EditPictureRoomDialog extends StatefulWidget {
-  const EditPictureRoomDialog({super.key, this.listPictureRoom, this.roomType});
-  final List<dynamic>? listPictureRoom;
+  const EditPictureRoomDialog({super.key, this.roomType});
   final RoomType? roomType;
   @override
   State<EditPictureRoomDialog> createState() => _EditPictureRoomDialogState();
@@ -29,8 +27,7 @@ class _EditPictureRoomDialogState extends State<EditPictureRoomDialog> {
   late EditRoomTypeController editRoomTypeController;
   @override
   void initState() {
-    editRoomTypeController =
-        EditRoomTypeController(listPictureRoomWidget: widget.listPictureRoom);
+    editRoomTypeController = EditRoomTypeController(roomType: widget.roomType);
     super.initState();
   }
 
@@ -96,28 +93,21 @@ class _EditPictureRoomDialogState extends State<EditPictureRoomDialog> {
   }
 }
 
-class EditPictureRoomWidget extends StatelessWidget {
+class EditPictureRoomWidget extends StatefulWidget {
   const EditPictureRoomWidget(
       {super.key, this.editRoomTypeController, this.roomType});
   final EditRoomTypeController? editRoomTypeController;
   final RoomType? roomType;
+
+  @override
+  State<EditPictureRoomWidget> createState() => _EditPictureRoomWidgetState();
+}
+
+class _EditPictureRoomWidgetState extends State<EditPictureRoomWidget> {
   @override
   Widget build(BuildContext context) {
-    void pickImage(String? namePicture) async {
-      PlatformFile? pickedFile = await FileHandler.pickSingleImage(context);
-      if (pickedFile == null) {
-        return;
-      }
-      String result = namePicture!.isNotEmpty
-          ? editRoomTypeController!.setImageToRoom(pickedFile, namePicture)
-          : editRoomTypeController!.addImageToRoom(pickedFile);
-      if (context.mounted && result != MessageCodeUtil.SUCCESS) {
-        MaterialUtil.showAlert(context, result);
-      }
-    }
-
     return ChangeNotifierProvider.value(
-      value: editRoomTypeController,
+      value: widget.editRoomTypeController,
       child: Consumer<EditRoomTypeController>(
           builder: (_, editRoomTypeController, __) {
         return editRoomTypeController.isLoading
@@ -128,184 +118,206 @@ class EditPictureRoomWidget extends StatelessWidget {
                 children: [
                   SingleChildScrollView(
                     child: Container(
-                      margin: const EdgeInsets.only(bottom: 65),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.all(20),
-                                child: NeutronTextTitle(
-                                  message: UITitleUtil.getTitleByCode(
-                                      UITitleCode.TABLEHEADER_IMAGE),
-                                  color: ColorUtil.colorBackgroudText,
-                                ),
+                      margin: const EdgeInsets.only(bottom: 60),
+                      child: Column(children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              child: NeutronTextTitle(
+                                isPadding: false,
+                                message: UITitleUtil.getTitleByCode(
+                                    UITitleCode.TOOLTIP_UPLOAD_PHOTOS),
+                                color: ColorUtil.colorBackgroudText,
+                                fontSize: 16,
                               ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              if (editRoomTypeController
-                                          .listPictureRoom.length <
-                                      5 &&
-                                  editRoomTypeController.number < 5)
-                                InkWell(
-                                  onTap: () {
-                                    pickImage('');
-                                  },
-                                  child: SizedBox(
-                                    height: 50,
-                                    width: 50,
-                                    child: Icon(
-                                      Icons.add,
-                                      color: ColorUtil.colorBackgroudText,
-                                    ),
-                                  ),
-                                )
-                            ],
-                          ),
-                          SingleChildScrollView(
-                            child: SizedBox(
-                                child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 0.5,
-                                          color: ColorUtil.colorBackgroudText)),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 1,
-                                          child: NeutronTextTitle(
-                                            textAlign: TextAlign.center,
-                                            message: UITitleUtil.getTitleByCode(
-                                                UITitleCode.SIDEBAR_STT),
-                                            color: ColorUtil.colorBackgroudText,
-                                          )),
-                                      const VerticalDivider(
-                                        color: Colors.black,
-                                        thickness: 4,
-                                      ),
-                                      Expanded(
-                                          flex: 3,
-                                          child: NeutronTextTitle(
-                                              textAlign: TextAlign.center,
-                                              message:
-                                                  UITitleUtil.getTitleByCode(
-                                                      UITitleCode
-                                                          .SIDEBAR_PICTURE),
-                                              color: ColorUtil
-                                                  .colorBackgroudText)),
-                                      const VerticalDivider(
-                                        color: Colors.black,
-                                        thickness: 4,
-                                      ),
-                                      Expanded(
-                                          flex: 2,
-                                          child: NeutronTextTitle(
-                                              textAlign: TextAlign.center,
-                                              message: UITitleUtil
-                                                  .getTitleByCode(UITitleCode
-                                                      .TABLEHEADER_ACTIVITIES),
-                                              color:
-                                                  ColorUtil.colorBackgroudText))
-                                    ],
-                                  ),
-                                ),
-                                ...editRoomTypeController.listPicture.keys
-                                    .map((key) => Container(
-                                          height: 300,
-                                          padding: const EdgeInsets.only(
-                                              bottom: 20, top: 20),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  width: 0.5,
-                                                  color: Colors.black)),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                  flex: 1,
-                                                  child: NeutronTextTitle(
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      message:
-                                                          '${int.parse(key) + 1}',
-                                                      color: ColorUtil
-                                                          .colorBackgroudText)),
-                                              Expanded(
-                                                  flex: 3,
-                                                  child: editRoomTypeController
-                                                              .base64
-                                                              .isNotEmpty &&
-                                                          editRoomTypeController
-                                                              .namePictureRoom
-                                                              .contains(key)
-                                                      ? Image.memory(
-                                                          editRoomTypeController
-                                                              .base64[key]!)
-                                                      : Image.network(
-                                                          editRoomTypeController
-                                                                  .listPicture[
-                                                              key]!,
-                                                          fit: BoxFit.fill,
-                                                        )),
-                                              Expanded(
-                                                  flex: 2,
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            pickImage(key);
-                                                          },
-                                                          child: Icon(
-                                                              Icons.edit,
-                                                              color: ColorUtil
-                                                                  .colorBackgroudText),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: InkWell(
-                                                          onTap: () {},
-                                                          child: Icon(
-                                                              Icons.delete,
-                                                              color: ColorUtil
-                                                                  .colorBackgroudText),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ))
-                                            ],
+                            ),
+                            if (editRoomTypeController.number < 5)
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: DottedBorder(
+                                  borderType: BorderType.RRect,
+                                  dashPattern: const [20, 4],
+                                  child: Container(
+                                    color: const Color(0xffdbe1e1),
+                                    height: 100,
+                                    width: double.infinity,
+                                    child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                              flex: 2,
+                                              child: Container(
+                                                padding: const EdgeInsets.only(
+                                                    left: 30),
+                                                height: 100,
+                                                child: FittedBox(
+                                                  fit: BoxFit.fill,
+                                                  child: Image.asset(
+                                                      'assets/img/logopicture.jpg'),
+                                                ),
+                                              )),
+                                          const SizedBox(
+                                            width: 20,
                                           ),
+                                          Expanded(
+                                              flex: 7,
+                                              child: SizedBox(
+                                                  height: 100,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              AddToRoom(
+                                                                idRoom: widget
+                                                                    .roomType!
+                                                                    .id,
+                                                              ));
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 50,
+                                                          width: 50,
+                                                          child: Icon(
+                                                            Icons.add,
+                                                            color: ColorUtil
+                                                                .colorBackgroudText,
+                                                          ),
+                                                        ),
+                                                        NeutronTextTitle(
+                                                          isPadding: false,
+                                                          message: UITitleUtil
+                                                              .getTitleByCode(
+                                                                  UITitleCode
+                                                                      .TOOLTIP_UPLOAD_PHOTOS),
+                                                          color: ColorUtil
+                                                              .colorBackgroudText,
+                                                          fontSize: 16,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )))
+                                        ]),
+                                  ),
+                                ),
+                              ),
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              height: 500,
+                              child: GridView.count(
+                                crossAxisCount: 3,
+                                childAspectRatio: 1.5,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20,
+                                children: widget.roomType!.imgs!.keys
+                                    .map((key) => MouseRegion(
+                                          onEnter: (_) {
+                                            setState(() =>
+                                                editRoomTypeController
+                                                    .setElevated(key, true));
+                                          },
+                                          onExit: (_) => setState(() =>
+                                              editRoomTypeController
+                                                  .setElevated(key, false)),
+                                          child: AnimatedContainer(
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                boxShadow:
+                                                    editRoomTypeController
+                                                            .isElevated[key]!
+                                                        ? [
+                                                            const BoxShadow(
+                                                              color: Colors
+                                                                  .black26,
+                                                              offset:
+                                                                  Offset(0, 10),
+                                                              blurRadius: 20,
+                                                            ),
+                                                          ]
+                                                        : [],
+                                              ),
+                                              child: picture(
+                                                  editRoomTypeController,
+                                                  key,
+                                                  context,
+                                                  editRoomTypeController
+                                                      .isElevated[key]!,
+                                                  widget.roomType!.imgs![key],
+                                                  widget.roomType!.id!)),
                                         ))
                                     .toList(),
-                              ],
-                            )),
-                          ),
-                        ],
-                      ),
+                              ),
+                            )
+                          ],
+                        ))
+                      ]),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: NeutronButton(
-                      onPressed: () async {
-                        print(roomType!.id!);
-                        String? result = await editRoomTypeController
-                            .updatePictureRoom(roomType!.id!);
-                        if (!context.mounted) {
-                          return;
-                        }
-                        MaterialUtil.showResult(
-                            context, MessageUtil.getMessageByCode(result));
-                      },
-                      icon: Icons.save,
-                    ),
-                  )
                 ],
               );
       }),
+    );
+  }
+
+  Widget picture(EditRoomTypeController pictureConfigController, String nameImg,
+      BuildContext context, bool isElevated, String img, String idRoom) {
+    return Stack(
+      children: [
+        SizedBox(
+          width: 400,
+          height: 220,
+          child: Image.network(
+            img,
+            fit: BoxFit.fill,
+          ),
+        ),
+        if (isElevated)
+          Positioned(
+              right: 0,
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AddToRoom(
+                                img: nameImg,
+                                linkImg: img,
+                                idRoom: idRoom,
+                              ));
+                    },
+                    child:
+                        Icon(Icons.edit, color: ColorUtil.colorBackgroudText),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      String? result = await pictureConfigController
+                          .deleteImageFromFirestore(nameImg, idRoom);
+                      if (context.mounted) {
+                        MaterialUtil.showAlert(
+                            context, MessageUtil.getMessageByCode(result));
+                      }
+                    },
+                    child:
+                        Icon(Icons.delete, color: ColorUtil.colorBackgroudText),
+                  ),
+                ],
+              ))
+      ],
     );
   }
 }

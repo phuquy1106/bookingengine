@@ -456,6 +456,7 @@ class UITitleCode {
   static const String TABLEHEADER_MAPPING_SOURCE = 'tableheader-mapping-source';
   static const String TABLEHEADER_MALE = 'tableheader-male';
   static const String TABLEHEADER_METHOD = 'tableheader-method';
+  static const String TABLEHEADER_METHOD_PAYMENT = 'tableheader-method-payment';
   static const String TABLEHEADER_METHOD_FROM = 'tableheader-method-from';
   static const String TABLEHEADER_METHOD_TO = 'tableheader-method-to';
 
@@ -839,6 +840,7 @@ class UITitleCode {
   static const String HEADER_WITHDRAW_CASH = 'header-withdraw-cash';
   static const String HEADER_ADD_CASH = 'header-add-cash';
   static const String HEADER_ADD_POLICY = 'header-add-policy';
+  static const String HEADER_ADD_PICTURE = 'header-add-picture';
   static const String HEADER_ADD_ACCOUNTING_TYPE = 'header-add-accounting-type';
   static const String HEADER_ITEM = 'header-item';
   static const String HEADER_RETURN_WAREHOUSE = 'header-return-warehouse';
@@ -1981,6 +1983,10 @@ class UITitleUtil {
     },
     UITitleCode.TABLEHEADER_MALE: {'en': 'Male', 'vi': 'Nam'},
     UITitleCode.TABLEHEADER_METHOD: {'en': 'Method', 'vi': 'Phương thức'},
+    UITitleCode.TABLEHEADER_METHOD_PAYMENT: {
+      'en': 'Method Payment',
+      'vi': 'Phương thức thanh toán'
+    },
     UITitleCode.TABLEHEADER_METHOD_FROM: {
       'en': 'From Method',
       'vi': 'Từ P/Thức'
@@ -2397,6 +2403,10 @@ class UITitleUtil {
     UITitleCode.HEADER_ADD_POLICY: {
       'en': 'Add Policy',
       'vi': 'Thêm chính sách'
+    },
+    UITitleCode.HEADER_ADD_PICTURE: {
+      'en': 'Add Picture',
+      'vi': 'Thêm hình ảnh'
     },
     UITitleCode.HEADER_ITEM: {'en': 'Item', 'vi': 'Mặt hàng'},
     UITitleCode.HEADER_RETURN_WAREHOUSE: {

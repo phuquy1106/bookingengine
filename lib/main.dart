@@ -1,4 +1,5 @@
 import 'package:bookingengine_frontend/manager/generalmanager.dart';
+import 'package:bookingengine_frontend/ui/loaddata.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:bookingengine_frontend/ui/home.dart';
@@ -21,6 +22,7 @@ void main() async {
   final GeneralManager generalManager = GeneralManager();
   // await GeneralManager.addRoomType();
   await GeneralManager.getUsersOfHotel();
+  await GeneralManager.getRoomTypes();
   await GeneralManager.getPolicy2();
   await generalManager.loadLocalStorage();
   runApp(
@@ -35,10 +37,34 @@ void main() async {
                   return MaterialPageRoute(
                       builder: (_) => const PageNotFound());
                 },
-                onGenerateInitialRoutes: (String value) {
-                  return [
-                    MaterialPageRoute(builder: (_) => const HomeWidget())
-                  ];
+                //   return [
+                //     MaterialPageRoute(builder: (_) => const HomeWidget())
+                //   ];
+                // },
+                initialRoute: '/',
+                onGenerateRoute: (settings) {
+                  print(settings.name);
+                  Uri uri = Uri.parse(settings.name!);
+                  if (uri.pathSegments.isNotEmpty) {
+                    if (uri.pathSegments.first == 'second') {
+                      return MaterialPageRoute(
+                        builder: (context) => const PageNotFound(),
+                      );
+                    }
+                    if (uri.pathSegments.first == 'cancel') {
+                      String? bookingId = uri.queryParameters['bookingId'];
+                      String? idPayment = '';
+                      if (uri.queryParameters['idpayment'] != null) {
+                        idPayment = uri.queryParameters['idpayment'];
+                      }
+                      return MaterialPageRoute(
+                        builder: (context) => LoadData(
+                            idBooking: bookingId!, idPayment: idPayment),
+                      );
+                    }
+                  }
+                  return MaterialPageRoute(
+                      builder: (context) => const HomeWidget());
                 },
                 debugShowCheckedModeBanner: false,
                 title: GeneralManager.hotel!.nameHotel!,

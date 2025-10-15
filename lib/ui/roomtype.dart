@@ -22,7 +22,7 @@ class RoomTypeWidget extends StatelessWidget {
                   topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
               child: Image.network(
                 room.imgs!.isNotEmpty
-                    ? room.imgs?.first
+                    ? room.imgs?.values.first
                     : 'https://firebasestorage.googleapis.com/v0/b/neutron-pms.appspot.com/o/img_booking_engine%2Fanh5.jpg?alt=media&token=86296279-4f66-47e7-a98f-eb5793ad3c5b',
                 fit: BoxFit.fill,
                 height: 700,
